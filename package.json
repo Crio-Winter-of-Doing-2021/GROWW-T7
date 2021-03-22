@@ -5,8 +5,8 @@
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start":"node app.js",
-    "backend":"nodemon app.js"
+    "start": "node app.js",
+    "backend": "nodemon app.js"
   },
   "repository": {
     "type": "git",
@@ -19,6 +19,8 @@
   },
   "homepage": "https://github.com/Crio-Winter-of-Doing-2021/GROWW-T7#readme",
   "dependencies": {
+    "body-parser": "^1.19.0",
+    "dialogflow": "^1.2.0",
     "express": "^4.17.1"
   },
   "devDependencies": {
