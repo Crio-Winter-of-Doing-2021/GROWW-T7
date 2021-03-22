@@ -6,10 +6,10 @@ var sessionClient = new dialogflow.SessionsClient();
 var sessionPath = sessionClient.sessionPath(config.googleProjectID, config.dialogFlowSessionID);
 
 
-module.exports = function app() {
+module.exports = app => { 
 
 
-    app.post('/api/df_text_query', (req, res) => {
+    app.post('/api/df_text_query', async(req, res) => {
 
         const request = {
             session: sessionPath,
@@ -20,11 +20,11 @@ module.exports = function app() {
                 }
             }
         };
-        let responses = await sessionClient
-        .detectIntent(request);
+  let responses = await sessionClient
+            .detectIntent(request);
 
-    res.send(responses[0].queryResult)
-});
+        res.send(responses[0].queryResult)
+    });
     app.post('/api/df_event_query', (req, res) => {
         res.send({'do': 'event query'})
     });
