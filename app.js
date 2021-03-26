@@ -1,5 +1,6 @@
 var express = require("express");
 var bodyParser = require("body-parser");
+var mongoose = require("mongoose");
 
 
 var app = express();
@@ -7,6 +8,16 @@ app.use(bodyParser.json());
 
 var PORT = process.env.PORT || 5000;
 
+//mongoose.connect("mongodb://localhost/chatbotDB");
+mongoose.connect("mongodb+srv://satyamnaidu:satyamnaidu@cluster0.dcljf.mongodb.net/test?retryWrites=true&w=majority", { useNewUrlParser: true, useUnifiedTopology: true });
+
+var {Schema} = mongoose;
+var contactInfoSchema = new Schema({
+    name: String,
+    email:String
+});
+
+mongoose.model('contact',contactInfoSchema);
 app.get('/',function(req,res){
     res.send("test");
 })

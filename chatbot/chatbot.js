@@ -1,32 +1,33 @@
-'use strict';
+'use strict'
 var dialogflow = require('dialogflow');
-var config = require('../config/keys');
-
 var structjson = require('./structjson.js');
+var config = require('../config/keys');
+var mongoose = require("mongoose");
 
-var projectId = config.googleProjectID;
-var sessionId = config.dialogFlowSessionID;
-var languageCode = config.dialogFlowSessionLanguageCode;
+var projectID = config.googleProjectID;
+var sessionID = config.dialogFlowSessionID;
+var languageCode = config.dialogFlowSessionID;
 
 var credentials = {
-    client_email: config.googleClientEmail,
-    private_key:
-    config.googlePrivateKey,
+    client_email : config.googleClientEmail,
+    private_key : config.googlePrivateKey
 };
 
-var sessionClient = new dialogflow.SessionsClient({projectId, credentials});
-var sessionPath = sessionClient.sessionPath(projectId, sessionId);
-
+const sessionClient = new dialogflow.SessionsClient({projectID : projectID,credentials : credentials});
+const sessionPath = sessionClient.sessionPath(config.googleProjectID, config.dialogFlowSessionID);
+ 
+const Contact = mongoose.model('contact');
 
 module.exports = {
-    textQuery: async function(text, parameters = {}) {
+    textQuery: async function(text,userID, parameters = {}) {
+        let sessionPath = sessionClient.sessionPath(projectID,sessionID + userID);
         let self = module.exports;
         const request = {
             session: sessionPath,
             queryInput: {
                 text: {
                     text: text,
-                    languageCode: languageCode,
+                    languageCode: config.dialogFlowSessionLanguageCode,
                 },
             },
             queryParams: {
@@ -41,16 +42,22 @@ module.exports = {
         return responses;
     },
 
-    eventQuery: async function(event, parameters = {}) {
+    eventQuery: async function(event,userID, parameters = {}) {
+        let sessionPath = sessionClient.sessionPath(projectID,sessionID + userID);
         let self = module.exports;
         const request = {
             session: sessionPath,
             queryInput: {
                 event: {
                     name: event,
-                    parameters: structjson.jsonToStructProto(parameters), //Dialogflow's v2 API uses gRPC. You'll need a jsonToStructProto method to convert your JavaScript object to a proto struct.
-                    languageCode: languageCode,
+                    parameters : structjson.jsonToStructProto(parameters),
+                    languageCode: config.dialogFlowSessionLanguageCode,
                 },
+            },
+            queryParams: {
+                payload: {
+                    data: parameters
+                }
             }
         };
 
@@ -58,12 +65,41 @@ module.exports = {
         responses = await self.handleAction(responses);
         return responses;
 
+
+
     },
+
+
 
 
     handleAction: function(responses){
+        let self = module.exports;
+        let queryResult = responses[0].queryResult;
+
+        switch (queryResult.action) {
+            case 'Topics-yes':
+                if (queryResult.allRequiredParamsPresent) {
+                    self.saveContactInfo(queryResult.parameters.fields);
+                }
+                break;
+        }
+
+    
+
         return responses;
     },
 
-
-} 
+    saveContactInfo: async function(fields){
+        const contact = new Contact({
+            name: fields.name.stringValue,
+            email: fields.email.stringValue,
+            dateSent: Date.now()
+        });
+        try{
+            let reg = await contact.save();
+            console.log(reg);
+        } catch (err){
+            console.log(err);
+        }
+    }
+}
