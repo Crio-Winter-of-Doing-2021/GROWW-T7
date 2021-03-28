@@ -6,7 +6,7 @@ import About from './pages/About';
 import Explore from './explore/Explore';
 import Stocks from './explore/Stocks';
 import MutualFunds from './explore/MutualFunds';
-import Chatbot from './chatbot/Chatbot';
+import Chatbot from './chatbot/Chatbot';  
 function App(){
     return(
         <div>

@@ -21,13 +21,11 @@ function Header(){
         <Link to={'/about'} className="nav-link">About</Link>
       </li>
     </ul>
-    <ul class="nav navbar-nav navbar-right">
+    {/* <ul class="nav navbar-nav navbar-right">
       <li>
-    <Link to={'/login'} className="nav-link">Login</Link></li>
-    <li>
-    <Link to={'/register'} className="nav-link">Register/Sign Up</Link></li>
-          </ul>
-   
+    <Link to={'/login'} className="nav-link">Login/Register</Link></li>
+    </ul>
+    */}
   </div>
 </nav>
 
