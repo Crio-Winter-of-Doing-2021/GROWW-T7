@@ -1,25 +1,28 @@
 var express = require("express");
 var bodyParser = require("body-parser");
 var cors = require("cors");
+const dotenv = require('dotenv');
+dotenv.config({ path: 'config/config.env'});
 var mongoose = require("mongoose");
+const cookieParser = require('cookie-parser');
+const fileUpload = require('express-fileupload')
+const connectDatabase = require('./config/database');
 
 var app = express();
-app.use(bodyParser.json({limit:"30mb",extended:true}));
+app.use(bodyParser.json());
+app.use(cookieParser());
+app.use(fileUpload());
+
 // app.use(bodyParser.urlencoded({limit:"30mb",extended:true}));
 // app.use(cors());
 
 var PORT = process.env.PORT || 5000;
 
 //mongoose.connect("mongodb://localhost/chatbotDB");
-mongoose.connect("mongodb+srv://satyamnaidu:satyamnaidu@cluster0.dcljf.mongodb.net/test?retryWrites=true&w=majority", { useNewUrlParser: true, useUnifiedTopology: true });
+//mongoose.connect("mongodb+srv://satyamnaidu:satyamnaidu@cluster0.dcljf.mongodb.net/test?retryWrites=true&w=majority", { useNewUrlParser: true, useUnifiedTopology: true });
 
-// mongoose.set('useFindAndModify',false);
+connectDatabase();
 
-// var stockSchema = mongoose.Schema({
-//     title:String,
-//     description:String,
-//     price:Number
-// })
 
 var {Schema} = mongoose;
 var contactInfoSchema = new Schema({
@@ -27,38 +30,24 @@ var contactInfoSchema = new Schema({
     email:String
 });
 
-//const StockMessage = mongoose.model('StockMessage',stockSchema);
-
 var contact = mongoose.model('contact',contactInfoSchema);
 app.get('/',function(req,res){
     res.send("test");
 })
 
-// app.get('/stocks',async function(req,res){
-//     try {
-//         const stockMessages = await StockMessage.find();
-//         console.log(stockMessages)
-//     } catch (error) {
-//         res.status(404).json("Error");
-//     }
-// });
-
-// app.post('/stocks',async function(req,res){
-//     const stock = req.body;
-//     const newStock = new StockMessage(stock);
-//     try {
-//         await newStock.save();
-//         res.status(201).json(newStock);
-//     } catch (error) {
-//         res.status(404).json("Error");
-//     }
-// })
-
 //adding the dialogflow routes to a separate file in the folder named routes
 require('./routes/dialogFlowRoutes')(app);
-require('./routes/signin')(app);
+
+//adding routes for products like stock and mutual funds
+const products =require('./routes/product');
+const auth =require('./routes/auth');
+
+app.use('/api/v1',products);
+app.use('/api/v1',auth);
 
 
 app.listen(PORT,function(){
     console.log("Chatbot for Investors Server has Started");
 });
+
+module.exports = app

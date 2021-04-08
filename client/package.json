@@ -12,12 +12,18 @@
     "materialize-css": "^1.0.0",
     "moment": "^2.29.1",
     "react": "^17.0.2",
+    "react-alert": "^7.0.2",
+    "react-alert-template-basic": "^1.0.0",
     "react-bootstrap": "^1.5.2",
     "react-dom": "^17.0.2",
     "react-file-base64": "^1.0.3",
+    "react-helmet": "^6.1.0",
+    "react-js-pagination": "^3.0.3",
+    "react-redux": "^7.2.3",
     "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.3",
     "redux": "^4.0.5",
+    "redux-devtools-extension": "^2.13.9",
     "redux-thunk": "^2.3.0",
     "universal-cookie": "^4.0.4",
     "uuid": "^8.3.2",
@@ -49,5 +55,6 @@
   },
   "devDependencies": {
     "http-proxy-middleware": "^1.0.6"
-  }
+  },
+  "proxy": "http://127.0.0.1:5000"
 }

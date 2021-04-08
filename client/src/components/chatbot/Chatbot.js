@@ -9,7 +9,6 @@ import QuickReplies from './QuickReplies';
 
 var cookies = new Cookies();
 
-
 class Chatbot extends Component {
     messagesEnd;
     constructor(props) {
@@ -22,7 +21,8 @@ class Chatbot extends Component {
         this.state = {
             messages: [],
             showBot:false,
-            stockWelcomesent:false
+            stockWelcomesent:false,
+            mfWelcomesent:false
         };
         if(cookies.get('userID')=== undefined)
         {
@@ -61,21 +61,42 @@ class Chatbot extends Component {
         }
     };
 
+     resolveAfterXSeconds(x){
+        return new Promise(resolve =>{
+            setTimeout(()=> {
+            resolve(x);
+        }, x*1000);  
+        });
+    }
 
-    componentDidMount() {
+      
+
+
+    async componentDidMount() {
         this.df_event_query('welcome');
 
         if(window.location.pathname==='/explore/stocks' && !this.state.stockWelcomesent){
+            await this.resolveAfterXSeconds(2);
             this.df_event_query('WELCOME_STOCKS');
-            this.setState({stockWelcomesent:false,showBot:true})
+            this.setState({stockWelcomesent:true,showBot:true})
+        }else if(window.location.pathname==='/explore/mutual-funds' && !this.state.mfWelcomesent){
+            await this.resolveAfterXSeconds(2);
+            this.df_event_query('WELCOME_MF');
+            this.setState({mfWelcomesent:true,showBot:true})
         }
 
-        this.props.history.listen(() =>{
+        this.props.history.listen(async() =>{
             console.log('listening');
-            if(this.props.history.location.pathname==='/explore/stocks' && !this.state.stockWelcomesent)
+            if (this.props.history.location.pathname==='/explore/stocks' && !this.state.stockWelcomesent)
             {
+                await this.resolveAfterXSeconds(2);
                 this.df_event_query('WELCOME_STOCKS');
-            this.setState({stockWelcomesent:false,showBot:true})
+            this.setState({stockWelcomesent:true,showBot:true})
+            }else if(this.props.history.location.pathname==='/explore/mutual-funds' && !this.state.mfWelcomesent)
+            {
+                await this.resolveAfterXSeconds(2);
+                this.df_event_query('WELCOME_MF');
+            this.setState({mfWelcomesent:true,showBot:true})
             }
     });
 }
@@ -101,9 +122,25 @@ class Chatbot extends Component {
         event.preventDefault();
         event.stopPropagation();
         switch (payload) {
-            case 'recommended_yes':
-                this.df_event_query('SHOW_RECOMMENDATIONS');
+            case 'recommend_stocks_yes':
+                this.df_event_query('SHOW_STOCKS_RECOMMENDATIONS');
                 break;
+            case 'recommend_mf_yes':
+                    this.df_event_query('SHOW_MF_RECOMMENDATIONS');
+                    break;
+            case 'invest_yes':
+               this.df_event_query('INVEST_YES');
+               break;
+
+            case 'invest_no':
+                this.df_event_query('INVEST_NO');  
+                break;  
+            case 'apply_yes':
+                    this.df_event_query('APPLY_KYC_YES');
+                    break;   
+            case 'apply_no':
+                    this.df_event_query('APPLY_KYC_NO');
+                    break;                                 
             default:
                 this.df_text_query(text);
                 break;
@@ -165,18 +202,18 @@ class Chatbot extends Component {
             e.target.value='';
         }
     }
+
+     
     render() {
  
         if(this.state.showBot){
         return (
 
             <div className="popup" style={{height: 500, width: 400, position: 'absolute',bottom: 0,right:0,border: '2px solid lightgrey'}}>
-                <nav style={{backgroundColor:'black'}} >
+                <nav style={{backgroundColor:'#333a41'}} >
                     <div className="nav-wrapper">
-                    <h3 className="brand-logo" style={{paddingLeft:'20%',paddingTop:'3%'}}>Investor Chatbot</h3>
-                    <ul id="nav-mobile" className="right hide-on-med-and-down">
-                        <li><a href="#/" onClick={this.hide}>close</a></li>
-                    </ul>
+                    <h3 className="brand-logo" style={{paddingLeft:'20%',paddingTop:'3%'}}><a href="#/" onClick={this.hide}>Investor Chatbot</a></h3>
+                   
                     </div>
                 </nav>
                 <div id="chatbot" style={{height: 388, width: '100%', overflow: 'auto'}}>
@@ -186,8 +223,8 @@ class Chatbot extends Component {
 
                     </div>
                 </div>
-                <div className="col s12">
-                <input style={{margin: 0 ,paddingLeft:'1%',paddingRight:'1%',width:'98%'}} placeholder="type a message" type="text" onKeyPress={this._handleInputKeyPress}/>
+                <div className="col s12" style={{backgroundColor:'white'}}>
+                <input style={{backgroundColor:'white'}} placeholder="type a message" type="text" onKeyPress={this._handleInputKeyPress}/>
                 </div>
             </div>
         );
@@ -196,12 +233,12 @@ class Chatbot extends Component {
         return (
 
             <div className="popup" style={{height: 40, width: 400, position: 'absolute',bottom: 0,right:0,border: '2px solid lightgrey'}}>
-                <nav style={{backgroundColor:'black'}} >
+                <nav style={{backgroundColor:'#333a41'}} >
                     <div className="nav-wrapper">
-                    <h3 className="brand-logo" style={{paddingLeft:'20%',paddingTop:'3%'}}>Investor Chatbot</h3>
-                    <ul id="nav-mobile" className="right hide-on-med-and-down">
-                        <li><a href="#/" onClick={this.show}>show</a></li>
-                    </ul> 
+                    <h3 className="brand-logo" style={{paddingLeft:'20%',paddingTop:'3%'}}><a href="#/" onClick={this.show}>Investor Chatbot</a></h3>
+                    
+                
+                   
                     </div>
                 </nav>
                 <div ref={(el) => { this.messagesEnd = el; }}

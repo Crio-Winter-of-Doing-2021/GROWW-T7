@@ -6,7 +6,7 @@ var mongoose = require("mongoose");
 
 var projectID = config.googleProjectID;
 var sessionID = config.dialogFlowSessionID;
-var languageCode = config.dialogFlowSessionID;
+
 
 var credentials = {
     client_email : config.googleClientEmail,

@@ -1,7 +1,11 @@
 import React from 'react';
+import { Fragment } from 'react';
+import MetaData from '../layout/MetaData'
 
 function About(){
     return(
+        <Fragment>
+        <MetaData title={'About Page'}/>
        <p> Groww is an India-based online investment platform[2] Headquartered in Bangalore. Groww allows investors to open an account electronically and transact in mutual funds and stocks online. As of Feb 7 2021, Groww had more than 10 million registered users on its platform[3] As of Sep 2020, the company had raised $59 million in venture capital. [4]
 
 
@@ -28,6 +32,7 @@ Awards
 2017-18: BSE Star MF award for 2nd best performer in RFD category in Karnataka [11]
 2017-18: 3rd place in BSE Star MF Fintech – Highest Transactions 2017-18 [12]
 2018-19: 1st place in BSE Star MF Fintech – Highest Transactions 2018-19 [13] </p>
+</Fragment>
     )
    
 }

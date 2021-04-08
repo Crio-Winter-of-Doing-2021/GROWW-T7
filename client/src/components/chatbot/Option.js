@@ -9,7 +9,7 @@ var Option = function(props){
           <span className="card-title">{props.payload.fields.header.stringValue}</span>
         </div>
         <div className="card-action">
-          <a href={props.payload.fields.link.stringValue} target="_blank" rel="noopener noreferrer">Click here for more info on {props.payload.fields.header.stringValue}</a>
+          <a href={props.payload.fields.link.stringValue} rel="noopener noreferrer">Click here for more info on {props.payload.fields.header.stringValue}</a>
         </div>
       </div>
 </div>

@@ -12,12 +12,13 @@ class QuickReplies extends Component {
     }
 
     renderQuickReply(reply, i) {
-        return <QuickReply key={i} click={this._handleClick} reply={reply} />;
+        return <QuickReply key={i} rel="noopener noreferrer" click={this._handleClick} reply={reply} />;
     }
 
     renderQuickReplies(quickReplies) {
         if (quickReplies) {
             return quickReplies.map((reply, i) => {
+                
                     return this.renderQuickReply(reply, i);
                 }
             )
@@ -34,7 +35,7 @@ class QuickReplies extends Component {
                         <div className="col s2">
                             <img className="btn-floating btn-large waves-effect waves-light red" src="https://www.internetandtechnologylaw.com/files/2019/06/iStock-872962368-chat-bots.jpg" alt="https://www.internetandtechnologylaw.com/files/2019/06/iStock-872962368-chat-bots.jpg"/>
                         </div>
-                        <div id="quick-replies" className="col s10">
+                        <div id="quick-replies" rel="noopener noreferrer" className="col s10">
                             {this.props.text && <p>
                                 {this.props.text.stringValue}
                             </p>

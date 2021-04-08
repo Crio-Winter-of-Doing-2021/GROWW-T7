@@ -1,35 +1,56 @@
-import React from 'react';
-import {Card} from 'react-bootstrap';
+import React,{Fragment, useEffect,useState} from 'react';
+import MetaData from '../layout/MetaData'
+import {useDispatch,useSelector} from 'react-redux';
+import {getProducts} from '../../actions/productActions'
+import Product from '../product/Product'
+import Pagination from 'react-js-pagination'
+const Stocks = ()=>{
+  const [currentPage,setCurrentPage] = useState(1)
+  const dispatch =useDispatch();
+  const  {products,productsCount,resPerPage} = useSelector(state =>state.products)
+  const [category] =useState('')
 
-function Stocks(){
-    const stockInfo = [
-        {image:"https://assets-netstorage.groww.in/stock-assets/logos/INE123W01016.png",title:"ABC Stock",price:"Rs 123"},
+  
+  useEffect(()=>{
+    dispatch(getProducts(currentPage,category));
+  },[dispatch,currentPage,category])
 
-        {image:"https://assets-netstorage.groww.in/stock-assets/logos/INE123W01016.png",title:"DEF Stock",price:"Rs 225"},
-
-        {image:"https://assets-netstorage.groww.in/stock-assets/logos/INE123W01016.png",title:"XYZ Stock",price:"Rs 552"},
-
-        {image:"https://assets-netstorage.groww.in/stock-assets/logos/INE123W01016.png",title:"GHI Stock",price:"Rs 10"}
-    ]
-
-    const renderStock = (stock,index) => {
-        return(
-           
-            <Card style={{ width: '15rem',margin:'2rem'}} key={index}>
-      <Card.Img variant="top"  src ={stock.image}/>
-      <Card.Body>
-        <Card.Title>{stock.title}</Card.Title>
-        <Card.Text>
-        {stock.price}
-        </Card.Text>
-      </Card.Body>
-    </Card>
-        );
-    };
-
-    return <div style={{display: 'flex', flexDirection: 'row'}} className="App">{stockInfo.map(renderStock)}</div>
-   
+  function setCurrentPageNo(pageNumber)
+  {
+    setCurrentPage(pageNumber)
+  }
+  return(
+    <Fragment>
+      <MetaData title={'Stocks Page'}/>
+      <h1 id="products_heading">All Stocks</h1>
+    <section id="products" className="container mt-5">
+    <div className="row">
+     
+      {products && products.map(product => (
+         product.category==='Stocks' && <Product key={product._id} product={product}/>
+      
+      ))}
+      
+      
+    </div>
+  </section>
+  <div className="d-flex justify-content-center mt-5">
+    <Pagination 
+        activePage={currentPage}
+        itemsCountPerPage={resPerPage}
+        totalItemsCount={productsCount}
+        onChange={setCurrentPageNo}
+        nextPageText={'Next'}
+        prevPageText={'Prev'}
+        firstPageText={'First'}
+        lastPageText={'Last'}
+        itemClass=  "page-item"
+        linkClass="page-link"
+        />
+  </div>
+  </Fragment>
+    ) 
 }
 
 
-export default Stocks;
+export default Stocks
