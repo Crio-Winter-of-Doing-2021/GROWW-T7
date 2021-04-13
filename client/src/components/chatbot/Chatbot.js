@@ -6,6 +6,8 @@ import { v4 as uuidv4 } from 'uuid';
 import Cookies from 'universal-cookie';
 import Option from './Option';
 import QuickReplies from './QuickReplies';
+import {compose} from 'redux'
+import {connect} from 'react-redux'
 
 var cookies = new Cookies();
 
@@ -22,13 +24,13 @@ class Chatbot extends Component {
             messages: [],
             showBot:false,
             stockWelcomesent:false,
-            mfWelcomesent:false
+            mfWelcomesent:false,
         };
         if(cookies.get('userID')=== undefined)
         {
         cookies.set('userID',uuidv4(),{path:'/'});
     }
-    console.log(cookies.get('userID'));
+    console.log("Cookie User ID is- "+cookies.get('userID'));
 }
     async df_text_query (queryText) {
         let says = {
@@ -61,6 +63,28 @@ class Chatbot extends Component {
         }
     };
 
+
+    async custom_query (queryText) {
+        let says = {
+            speaks: 'bot',
+            msg: {
+                text : {
+                    text: queryText
+                }
+            }
+        }
+        this.setState({ messages: [...this.state.messages, says]});
+        //const res = await axios.post('/api/df_text_query',  {text:queryText,userID: cookies.get('userID')});
+        // for (let msg of res.data.fulfillmentMessages) {
+        //     console.log(JSON.stringify(msg));
+        //     says = {
+        //         speaks: 'bot',
+        //         msg: msg
+        //     }
+        //      this.setState({ messages: [...this.state.messages, says]});
+        // }
+    };
+
      resolveAfterXSeconds(x){
         return new Promise(resolve =>{
             setTimeout(()=> {
@@ -69,34 +93,92 @@ class Chatbot extends Component {
         });
     }
 
-      
-
-
+    
+ 
     async componentDidMount() {
-        this.df_event_query('welcome');
 
-        if(window.location.pathname==='/explore/stocks' && !this.state.stockWelcomesent){
-            await this.resolveAfterXSeconds(2);
+        if(window.location.pathname==='/'){
+            await this.resolveAfterXSeconds(1);
+            if(this.props.auth.isAuthenticated)
+            {  
+                this.custom_query('Hello '+this.props.auth.user.name);
+                this.df_event_query('LOGIN_WELCOME_EVENT');
+                this.setState({showBot:true})
+            }
+            else{
+                console.log("this.props.auth.isAuthenticated="+this.props.auth.isAuthenticated);
+          
+                    this.df_event_query('welcome');
+                    this.df_event_query('login');
+                    this.setState({showBot:true})
+            }
+        }        
+            
+        else if(window.location.pathname==='/explore/stocks' && !this.state.stockWelcomesent){
+            await this.resolveAfterXSeconds(1);
             this.df_event_query('WELCOME_STOCKS');
             this.setState({stockWelcomesent:true,showBot:true})
         }else if(window.location.pathname==='/explore/mutual-funds' && !this.state.mfWelcomesent){
-            await this.resolveAfterXSeconds(2);
+            await this.resolveAfterXSeconds(1);
             this.df_event_query('WELCOME_MF');
             this.setState({mfWelcomesent:true,showBot:true})
+        } else if(this.props.history.location.pathname.startsWith('/product/')){
+          
+           
+            await this.resolveAfterXSeconds(1);
+           console.log("this.props.productDetails "+this.props.productDetails.product._id);
+        this.custom_query('You are viewing the product '+this.props.productDetails.product.name+" which is of category "+this.props.productDetails.product.category);
+        this.custom_query("Product ID is- "+this.props.productDetails.product._id);
+        (this.props.productDetails.product.category==='Stocks') ?
+        this.df_event_query('VIEW_FAQ_PRODUCT_STOCK')
+      :  this.df_event_query('VIEW_FAQ_PRODUCT_MF');  
+          
+            this.setState({showBot:true})
         }
 
         this.props.history.listen(async() =>{
             console.log('listening');
-            if (this.props.history.location.pathname==='/explore/stocks' && !this.state.stockWelcomesent)
+            if(window.location.pathname==='/'){
+                await this.resolveAfterXSeconds(1);
+                if(this.props.auth.isAuthenticated)
+                {   console.log("this.props.auth.isAuthenticated="+this.props.auth.isAuthenticated);
+                  console.log("this.props.auth.user.name"+this.props.auth.user.name);
+                    this.custom_query('Hello '+this.props.auth.user.name);
+                    this.df_event_query('LOGIN_WELCOME_EVENT');
+                    this.setState({showBot:true})
+                }
+                else{
+                    console.log("this.props.auth.isAuthenticated="+this.props.auth.isAuthenticated);
+              
+                        this.df_event_query('welcome');
+                        this.df_event_query('login');
+                        this.setState({showBot:true})
+                }
+            }      
+            else if (this.props.history.location.pathname==='/explore/stocks' && !this.state.stockWelcomesent)
             {
-                await this.resolveAfterXSeconds(2);
+                await this.resolveAfterXSeconds(1);
                 this.df_event_query('WELCOME_STOCKS');
             this.setState({stockWelcomesent:true,showBot:true})
             }else if(this.props.history.location.pathname==='/explore/mutual-funds' && !this.state.mfWelcomesent)
             {
-                await this.resolveAfterXSeconds(2);
+                await this.resolveAfterXSeconds(1);
                 this.df_event_query('WELCOME_MF');
             this.setState({mfWelcomesent:true,showBot:true})
+            }
+            else if(this.props.history.location.pathname.startsWith('/product/'))
+            { 
+                await this.resolveAfterXSeconds(1);
+               
+                this.custom_query('You are viewing the product '+this.props.productDetails.product.name+" which is of category "+this.props.productDetails.product.category);
+                this.custom_query("Product ID is- "+this.props.productDetails.product._id); 
+                
+                (this.props.productDetails.product.category==='Stocks') ?
+                    this.df_event_query('VIEW_FAQ_PRODUCT_STOCK')
+                  :  this.df_event_query('VIEW_FAQ_PRODUCT_MF');  
+                      
+              
+                this.setState({showBot:true})
             }
     });
 }
@@ -109,6 +191,7 @@ class Chatbot extends Component {
     show(event) {
         event.preventDefault();
         event.stopPropagation();
+       
         this.setState({showBot: true});
     }
 
@@ -146,6 +229,8 @@ class Chatbot extends Component {
                 break;
         }    
     }
+
+  
 
     renderOptions(options){
         return options.map((option,i) => <Option key ={i} payload={option.structValue}/>);
@@ -202,21 +287,21 @@ class Chatbot extends Component {
             e.target.value='';
         }
     }
-
-     
-    render() {
  
+    render() {
+        
+       
         if(this.state.showBot){
         return (
-
+              
             <div className="popup" style={{height: 500, width: 400, position: 'absolute',bottom: 0,right:0,border: '2px solid lightgrey'}}>
                 <nav style={{backgroundColor:'#333a41'}} >
                     <div className="nav-wrapper">
-                    <h3 className="brand-logo" style={{paddingLeft:'20%',paddingTop:'3%'}}><a href="#/" onClick={this.hide}>Investor Chatbot</a></h3>
+                    <h3 className="brand-logo" style={{paddingLeft:'20%',paddingTop:'1%',marginBottom:'10%'}}><a href="#/" id="chatbothyperlink2" onClick={this.hide}>Investor Chatbot</a></h3>
                    
                     </div>
                 </nav>
-                <div id="chatbot" style={{height: 388, width: '100%', overflow: 'auto'}}>
+                <div id="chatbot" style={{height: 388, width: '100%', overflow: 'auto',backgroundColor:'lightgrey'}}>
                     {this.renderMessages(this.state.messages)}
                     <div ref = {(el) => {this.messagesEnd = el;}}
                     style={{float:'left',clear:'both'}}>
@@ -232,10 +317,10 @@ class Chatbot extends Component {
     {
         return (
 
-            <div className="popup" style={{height: 40, width: 400, position: 'absolute',bottom: 0,right:0,border: '2px solid lightgrey'}}>
+            <div className="popup" style={{height: 40, width: 400, position: 'absolute',bottom: 25,right:0,border: '2px solid lightgrey'}}>
                 <nav style={{backgroundColor:'#333a41'}} >
                     <div className="nav-wrapper">
-                    <h3 className="brand-logo" style={{paddingLeft:'20%',paddingTop:'3%'}}><a href="#/" onClick={this.show}>Investor Chatbot</a></h3>
+                    <h3 className="brand-logo" style={{paddingLeft:'20%',paddingBottom:'4px',marginBottom:'100px'}}><a href="#/" id="chatbothyperlink" onClick={this.show}>Investor Chatbot</a></h3>
                     
                 
                    
@@ -248,6 +333,19 @@ class Chatbot extends Component {
                 </div>
             );
     }
+    }
 }
+
+
+
+function mapStateToProps(state){
+    return {
+        auth:state.auth,
+        productDetails:state.productDetails
+    }
 }
-export default withRouter(Chatbot);
+
+export default compose(
+    withRouter,
+    connect(mapStateToProps)
+  )(Chatbot);

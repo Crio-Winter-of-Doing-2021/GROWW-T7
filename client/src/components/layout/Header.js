@@ -29,9 +29,17 @@ function Header(){
       <li className="nav-item">
         <Link to={'/about'} className="nav-link">About</Link>
       </li>
+      <li className="nav-item">
+        <Link to={'/faqs'} className="nav-link">FAQs</Link>
+      </li>
     </ul>
         {user?(
+          
           <div className="ml-4 dropdown d-inline">
+            <span style={{paddingRight:'10px'}}>
+            <span id="cart" class="ml-3">Cart</span>
+        <span class="ml-1" id="cart_count">0</span>
+        </span>
             <Link to="#!" className="btn dropdown-toggle text-white"
             type="button" id="dropDownMenuButton" data-toggle="dropdown" aria-haspopup="true"
             aria-expanded="false">
@@ -48,6 +56,10 @@ function Header(){
 
         ) : !loading && 
         <ul class="nav navbar-nav navbar-right">
+          <li style={{paddingTop:'8px',paddingRight:'10px'}}>
+          <span id="cart" class="ml-3">Cart</span>
+        <span class="ml-1" id="cart_count">0</span>
+          </li>
       <li>
       <Link to='/login' className="nav-link">Login</Link>
         </li>

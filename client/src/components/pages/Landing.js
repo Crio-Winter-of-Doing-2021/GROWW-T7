@@ -34,9 +34,8 @@ const Landing = ()=>{
         </h4>
         <div className="pl-0">
           {categories.map(category=>(
-            <button
-               style={{cursor:'pointer',
-                        listStyleType:'none',width:'20%',height:'3rem',backgroundColor:'#f44336',marginRight:'2%'
+            <button class="btnn third"
+               style={{backgroundColor:'black',display: 'inline',width:'25%',height:'30%',marginRight:'2%'
                       }}
                     key={category}
                     onClick={() =>setCategory(category)}  >

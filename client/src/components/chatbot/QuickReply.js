@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom'
 
 
 const QuickReply = (props) => {
@@ -17,10 +18,10 @@ const QuickReply = (props) => {
         );
     } else {
         return (
-            <a style={{ margin: 3}} target="_blank" rel="noreferrer" href={props.reply.structValue.fields.link.stringValue}
+            <Link style={{ margin: 3}} rel="noreferrer noopener" to={props.reply.structValue.fields.link.stringValue}
                className="btn-floating btn-large waves-effect waves-light red">
                 {props.reply.structValue.fields.text.stringValue}
-            </a>
+            </Link>
         );
     }
 

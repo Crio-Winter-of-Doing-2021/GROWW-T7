@@ -40,10 +40,12 @@ require('./routes/dialogFlowRoutes')(app);
 
 //adding routes for products like stock and mutual funds
 const products =require('./routes/product');
+const faq =require('./routes/faq');
 const auth =require('./routes/auth');
 
 app.use('/api/v1',products);
 app.use('/api/v1',auth);
+app.use('/api/v1',faq);
 
 
 app.listen(PORT,function(){
