@@ -1,7 +1,5 @@
 import React,{Fragment,useEffect} from 'react';
-import {Link} from 'react-router-dom';
 import MetaData from '../layout/MetaData'
-import {MDBDataTable} from 'mdbreact'
 import {useDispatch,useSelector} from 'react-redux'
 import {myOrders} from '../../actions/orderActions'
 
@@ -13,7 +11,6 @@ const {orders} = useSelector(state=>state.myOrders)
 
 useEffect(()=>{
     dispatch(myOrders());
-    console.log("1.MY ORDERS ARE -"+orders)
 
 },[dispatch])
 

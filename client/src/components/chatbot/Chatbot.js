@@ -122,13 +122,24 @@ class Chatbot extends Component {
             await this.resolveAfterXSeconds(1);
             this.df_event_query('WELCOME_MF');
             this.setState({mfWelcomesent:true,showBot:true})
-        } else if(this.props.history.location.pathname.startsWith('/product/')){
-          
-           
+
+        } 
+        
+        
+        else if(this.props.history.location.pathname.startsWith('/product/')){
+              
             await this.resolveAfterXSeconds(1);
-           console.log("this.props.productDetails "+this.props.productDetails.product._id);
+           console.log("my order-" +this.props.myOrders.orders[0].orderItems[0].product)
+this.props.myOrders.orders[0].orderItems[0].product===
+           this.props.productDetails.product._id ?
+           this.custom_query("You have already bought this product")
+           : this.custom_query("You havent bought this product")
+          
+        
+
         this.custom_query('You are viewing the product '+this.props.productDetails.product.name+" which is of category "+this.props.productDetails.product.category);
         this.custom_query("Product ID is- "+this.props.productDetails.product._id);
+        
         (this.props.productDetails.product.category==='Stocks') ?
         this.df_event_query('VIEW_FAQ_PRODUCT_STOCK')
       :  this.df_event_query('VIEW_FAQ_PRODUCT_MF');  
@@ -169,10 +180,17 @@ class Chatbot extends Component {
             else if(this.props.history.location.pathname.startsWith('/product/'))
             { 
                 await this.resolveAfterXSeconds(1);
-               
+                console.log("my order-" +this.props.myOrders.orders[0].orderItems[0].product)
+                this.props.myOrders.orders[0].orderItems[0].product===
+                    this.props.productDetails.product._id ?
+                    this.custom_query("You have already bought this product")
+                    : this.custom_query("You havent bought this product")
+                   
+            
+         
                 this.custom_query('You are viewing the product '+this.props.productDetails.product.name+" which is of category "+this.props.productDetails.product.category);
                 this.custom_query("Product ID is- "+this.props.productDetails.product._id); 
-                
+        
                 (this.props.productDetails.product.category==='Stocks') ?
                     this.df_event_query('VIEW_FAQ_PRODUCT_STOCK')
                   :  this.df_event_query('VIEW_FAQ_PRODUCT_MF');  
@@ -341,7 +359,8 @@ class Chatbot extends Component {
 function mapStateToProps(state){
     return {
         auth:state.auth,
-        productDetails:state.productDetails
+        productDetails:state.productDetails,
+        myOrders:state.myOrders
     }
 }
 

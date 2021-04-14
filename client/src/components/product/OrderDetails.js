@@ -13,10 +13,10 @@ const OrderDetails = ({order}) =>{
         
             {order.orderItems.map(orderItem =>(
             <div>
-              <p>Product ID- {orderItem._id}</p>
+              <p>Product ID- {orderItem.product}</p>
               <p>Product name- {orderItem.name}</p>
               <p>Product Quantity- {orderItem.quantity}</p>
-              <p>Product Image- <img src={orderItem.imageurl}/></p>
+              <p>Product Image- <img alt="Not Found" src={orderItem.imageurl} /></p>
               </div>  
             ))}
             </h5>
