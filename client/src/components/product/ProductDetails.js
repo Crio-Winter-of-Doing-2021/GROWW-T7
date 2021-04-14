@@ -1,13 +1,14 @@
-import React,{Fragment,useEffect} from 'react';
+import React,{Fragment,useEffect,useState} from 'react';
 import MetaData from '../layout/MetaData'
 import {useDispatch,useSelector} from 'react-redux'
 import {getProductDetails,clearErrors} from '../../actions/productActions'
+import {addItemToCart} from '../../actions/cartActions'
 
 
 const ProductDetails = ({match}) => {
     const dispatch = useDispatch();
    
-
+     const [quantity,setQuantity] = useState(1);
     const {error,product} = useSelector(state=>state.productDetails)
 
 
@@ -19,6 +20,28 @@ const ProductDetails = ({match}) => {
         }
 
     },[dispatch,error,match.params.id])
+
+    const increaseQty = () =>{
+        const count = document.querySelector('.count')
+        if(count.valueAsNumber >= product.stock) return;
+
+        const qty = count.valueAsNumber+1;
+        setQuantity(qty);
+    }
+
+    const decreaseQty = () =>{
+        const count = document.querySelector('.count')
+        if(count.valueAsNumber <=1) return;
+
+        const qty = count.valueAsNumber-1;
+        setQuantity(qty);
+        
+    }
+
+    const addToCart = () =>{
+        dispatch(addItemToCart(match.params.id,quantity));
+        alert('Item addes to Cart')
+    }
     return(
         <Fragment>
             <MetaData title={product.name}/>
@@ -43,14 +66,14 @@ const ProductDetails = ({match}) => {
 
            
             <div className="stockCounter d-inline">{product.category==='Stocks' ? <div>
-                <span className="btn btn-danger minus">-</span>
+                <span className="btn btn-danger minus" onClick={decreaseQty}>-</span>
 
-                <input type="number" className="form-control count d-inline" value="1" readOnly />
+                <input type="number" className="form-control count d-inline" value={quantity} readOnly />
 
-                <span className="btn btn-primary plus">+</span>
+                <span className="btn btn-primary plus" onClick={increaseQty}>+</span>
                 </div> : <p></p>}
             </div>
-             <button style={{marginTop:'20px'}}type="button" id="cart_btn" className="btn btn-primary d-inline ml-4">Add to Cart</button>
+             <button style={{marginTop:'20px'}}type="button" id="cart_btn" className="btn btn-primary d-inline ml-4" disabled={product.stock===0} onClick={addToCart}>Add to Cart</button>
 
             <hr/>
 

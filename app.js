@@ -42,10 +42,12 @@ require('./routes/dialogFlowRoutes')(app);
 const products =require('./routes/product');
 const faq =require('./routes/faq');
 const auth =require('./routes/auth');
+const order =require('./routes/order');
 
 app.use('/api/v1',products);
 app.use('/api/v1',auth);
 app.use('/api/v1',faq);
+app.use('/api/v1',order);
 
 
 app.listen(PORT,function(){

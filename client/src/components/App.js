@@ -16,6 +16,10 @@ import Register from '../components/user/Register'
 import {loadUser} from '../actions/userActions'
 import store from '../store'
 import MFFaq from './pages/MFFaq';
+import Cart from '../components/cart/Cart';
+import Shipping from '../components/cart/Shipping';
+import ListOrders from '../components/order/ListOrders'
+
 function App(){
 
     useEffect(()=>{
@@ -36,9 +40,12 @@ function App(){
                     <Route exact path="/explore/mutual-funds" component ={MutualFunds} />
                     <Route exact path="/login" component ={Login} />
                     <Route exact path="/register" component ={Register} />
+                    <Route exact path="/cart" component ={Cart} />
                     <Route exact path="/faqs" component ={Faq} />
                     <Route exact path="/faqs/stocks" component ={StockFaq} />
                     <Route exact path="/faqs/mf" component ={MFFaq} />
+                    <Route exact path="/shipping" component ={Shipping} />
+                    <Route exact path="/orders/me" component ={ListOrders} />
                     <Chatbot/>
                 </div>
             </BrowserRouter>

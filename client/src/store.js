@@ -4,14 +4,25 @@ import {composeWithDevTools} from 'redux-devtools-extension';
 import {productsReducer,productDetailsReducer} from './reducers/productReducers'
 import {authReducer} from './reducers/userReducers'
 import {faqsReducer} from './reducers/faqReducers'
+import {myOrdersReducer} from './reducers/orderReducers'
+
+import {cartReducer} from './reducers/cartReducers'
 const reducer = combineReducers({
     products:productsReducer,
     productDetails:productDetailsReducer,
     auth:authReducer,
-    faqs:faqsReducer
+    faqs:faqsReducer,
+    cart:cartReducer,
+    myOrders:myOrdersReducer
 })
 
-let initialState = {}
+let initialState = {
+    cart: {
+        cartItems:localStorage.getItem('cartItems')
+        ? JSON.parse(localStorage.getItem('cartItems'))
+        : []
+    }
+}
 
 const middleware = [thunk]
 const store = createStore(reducer,initialState,composeWithDevTools(applyMiddleware(...middleware)))

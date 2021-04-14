@@ -7,6 +7,8 @@ function Header(){
    
   const dispatch = useDispatch();
    const {user,loading} = useSelector(state=>state.auth)
+   const {cartItems} = useSelector(state=>state.cart)
+   
   const logoutHandler =()=>{
     dispatch(logout());
   }
@@ -36,10 +38,10 @@ function Header(){
         {user?(
           
           <div className="ml-4 dropdown d-inline">
-            <span style={{paddingRight:'10px'}}>
+            <Link to='/cart' style={{paddingRight:'10px'}}>
             <span id="cart" class="ml-3">Cart</span>
-        <span class="ml-1" id="cart_count">0</span>
-        </span>
+        <span class="ml-1" id="cart_count">{cartItems.length}</span>
+        </Link>
             <Link to="#!" className="btn dropdown-toggle text-white"
             type="button" id="dropDownMenuButton" data-toggle="dropdown" aria-haspopup="true"
             aria-expanded="false">
@@ -48,6 +50,7 @@ function Header(){
           
 </Link>
 <div className="dropdown-menu" aria-labelledby="dropDownMenuButton">
+<Link className="dropdown-item text-danger" to="/orders/me"> My Orders</Link>
   <Link className="dropdown-item text-danger" to="/" onClick={logoutHandler}>
     Logout
   </Link>
